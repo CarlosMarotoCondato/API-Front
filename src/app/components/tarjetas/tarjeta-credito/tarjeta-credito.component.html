@@ -1,0 +1,31 @@
+
+<div class="mx-6 grid grid-rows-3 grid-cols-3 gap-4">
+
+
+    <mat-form-field appearance="outline" class="col-span-3">
+        <mat-label>Titular</mat-label>
+        <input matInput placeholder="Example" [(ngModel)]="titular" required>
+        <mat-icon matSuffix>account_circle</mat-icon>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="col-span-3">
+        <mat-label>Numero de la tarjeta</mat-label>
+        <input matInput #tarjta placeholder="0000000000000000" [(ngModel)]="nTarjeta" required maxlength="16" minlength="16">
+        <mat-hint align="end">{{tarjta.value?.length || 0}}/16</mat-hint>
+        <mat-icon matSuffix>credit_card</mat-icon>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="col-span-2"> 
+        <mat-label>Fecha de expiracion</mat-label>
+        <input matInput placeholder="01/10" [(ngModel)]="fechaEx">
+        <mat-icon matSuffix>date_range</mat-icon>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>CVV</mat-label>
+        <input matInput placeholder="123" [(ngModel)]="cvv">
+        <mat-icon matSuffix>key</mat-icon>
+    </mat-form-field>
+
+    <button mat-stroked-button class="col-span-3" style="background-color: rgb(73, 161, 73); " (click)="enviaFormulario()">
+        Añadir
+    </button>
+
+</div>
