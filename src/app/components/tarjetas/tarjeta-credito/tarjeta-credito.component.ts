@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {FormControl, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import { tarjetaCredito } from 'src/app/models/tarjetaCredito';
+import { TarjetaService } from 'src/app/services/tarjeta.service';
 
 
 @Component({
@@ -9,32 +11,40 @@ import {FormControl, Validators} from '@angular/forms';
 })
 export class TarjetaCreditoComponent implements OnInit {
 
-  email = new FormControl('', [Validators.required]);
+  formulario: FormGroup;
 
-  getErrorMessage() {
-    if (this.email.hasError('required')) {
-      return 'You must enter a value';
-    }
-
-    return this.email.hasError('email') ? 'Not a valid email' : '';
-  }
-
-  titular : string;
-  nTarjeta : string;
-  fechaEx : string;
-  cvv : string;
-
-  constructor() { }
+  constructor(private tarjetaService : TarjetaService, private formBuilder: FormBuilder) { 
+    this.formulario = this.formBuilder.group({
+      id : 0,
+      titular : ['', [Validators.required]],
+      numeroTarjeta :  ['', [Validators.required, Validators.maxLength(16), Validators.minLength(16)]],
+      fechaExpiracion :  ['', [Validators.required, Validators.maxLength(5), Validators.minLength(5)]],
+      cvv :  ['', [Validators.required, Validators.maxLength(3), Validators.minLength(3)]],
+    })
+   }
 
   ngOnInit(): void {
 
   }
 
   enviaFormulario(){
-    console.log(this.titular);
-    console.log(this.nTarjeta);
-    console.log(this.fechaEx);
-    console.log(this.cvv);
+    
+    console.log(this.formulario);
+
+    const tarjeta:tarjetaCredito = {
+      titular : this.formulario.get('titular').value,
+      numeroTarjeta : this.formulario.get('numeroTarjeta').value,
+      fechaExpiracion : this.formulario.get('fechaExpiracion').value,
+      cvv : this.formulario.get('cvv').value
+    }
+
+    console.log(tarjeta);
+
+    this.tarjetaService.guardarTarjeta(tarjeta).subscribe(data => {
+      console.log('Guardado exitosamente')
+      this.formulario.reset();
+    })
+
   }
 
 }
