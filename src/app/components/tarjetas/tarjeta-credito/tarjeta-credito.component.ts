@@ -15,7 +15,7 @@ export class TarjetaCreditoComponent implements OnInit, OnDestroy {
   formulario: FormGroup;
   subscription: Subscription;
   tarjeta: tarjetaCredito;
-  idTarjeta = 0;
+  idTarjeta:number = 0;
 
   @Output() newItemEvent = new EventEmitter<string>();
 
@@ -30,6 +30,7 @@ export class TarjetaCreditoComponent implements OnInit, OnDestroy {
    }
 
   ngOnInit(): void {
+
     this.subscription = this.tarjetaService.obtenerTarjeta().subscribe(data => {
       console.log(data);
       this.tarjeta = data;
@@ -42,6 +43,9 @@ export class TarjetaCreditoComponent implements OnInit, OnDestroy {
       })
       this.idTarjeta = this.tarjeta.id;
     })
+
+    this.idTarjeta = 0;
+
   }
 
   ngOnDestroy(): void {
@@ -49,10 +53,14 @@ export class TarjetaCreditoComponent implements OnInit, OnDestroy {
   }
 
   enviaFormulario(){
+
+    console.log(this.idTarjeta);
+
     if(this.idTarjeta === 0){
       this.agregarTarjeta();
     }else{
       this.editarTarjeta();
+
     }    
 
   }
@@ -71,7 +79,7 @@ export class TarjetaCreditoComponent implements OnInit, OnDestroy {
     console.log(tarjeta);
 
     this.tarjetaService.guardarTarjeta(tarjeta).subscribe(data => {
-      console.log('Guardado exitosamente');
+      alert('Guardado exitosamente');
       this.formulario.reset();
       this.addNewItem("");
     })
@@ -87,7 +95,7 @@ export class TarjetaCreditoComponent implements OnInit, OnDestroy {
     }
 
     this.tarjetaService.actualizarTarjeta(this.idTarjeta, tarjeta).subscribe(data =>{
-      console.log('Editado exitosamente');
+      alert('Editado exitosamente');
       this.formulario.reset();
       this.addNewItem("");
       this.idTarjeta=0;
