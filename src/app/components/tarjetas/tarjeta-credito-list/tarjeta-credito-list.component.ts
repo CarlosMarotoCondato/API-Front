@@ -22,18 +22,38 @@ export class TarjetaCreditoListComponent implements OnInit {
   //   console.log( this.tarjetas);
   // }
 
-  async ngOnInit() {
-   
+  ngOnInit() {
+
+   this.recogeInformacion();
+    
+  }
+
+  async recogeInformacion(){
     this.tarjetas = await this.tarjetaService.obtenerTarjetas()
     
     this.dataSource = new MatTableDataSource<tarjetaCredito>(this.tarjetas);
 
     console.log(this.tarjetas);
-    
   }
 
 
-  displayedColumns: string[] = ['titular', 'numeroTarjeta', 'fechaExpiracion', 'cvv'];
+  displayedColumns: string[] = ['titular', 'numeroTarjeta', 'fechaExpiracion', 'edit','delete'];
   dataSource = new MatTableDataSource<tarjetaCredito>(this.tarjetas);
+
+  eliminar(id:number){
+    if(confirm("Esta seguro que desea eliminar el registro?")){
+      this.tarjetaService.eliminarTarjeta(id).subscribe(async data => {
+        alert("Registro eliminado");
+        console.log(this.tarjetas);
+
+        this.recogeInformacion();
+
+      })
+    }
+  }
+
+  editar(tarjeta){
+    this.tarjetaService.actualizar(tarjeta);
+  }
 
 }

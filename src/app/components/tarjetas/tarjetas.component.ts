@@ -12,4 +12,10 @@ export class TarjetasComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  booleano:boolean;
+
+  addItem(newItem: string) {
+    this.booleano = !this.booleano;
+  }
+
 }

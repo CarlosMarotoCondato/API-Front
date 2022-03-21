@@ -8,7 +8,7 @@
 
            <h4 class="text-xl">Agregar tarjeta de credito</h4> 
 
-            <app-tarjeta-credito>
+            <app-tarjeta-credito (newItemEvent)="addItem($event)">
 
             </app-tarjeta-credito>
         </div>
@@ -17,9 +17,13 @@
             
             <h4 class="text-xl">Listado de tarjetas</h4>
 
-            <app-tarjeta-credito-list class="flex d-flex">
+            <app-tarjeta-credito-list *ngIf="booleano" class="flex d-flex">
 
-            </app-tarjeta-credito-list>     
+            </app-tarjeta-credito-list>    
+            
+            <app-tarjeta-credito-list *ngIf="!booleano" class="flex d-flex">
+
+            </app-tarjeta-credito-list> 
             
         </div>
 

@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { tarjetaCredito } from 'src/app/models/tarjetaCredito';
 import { TarjetaService } from 'src/app/services/tarjeta.service';
 
@@ -9,9 +10,14 @@ import { TarjetaService } from 'src/app/services/tarjeta.service';
   templateUrl: './tarjeta-credito.component.html',
   styleUrls: ['./tarjeta-credito.component.css']
 })
-export class TarjetaCreditoComponent implements OnInit {
+export class TarjetaCreditoComponent implements OnInit, OnDestroy {
 
   formulario: FormGroup;
+  subscription: Subscription;
+  tarjeta: tarjetaCredito;
+  idTarjeta = 0;
+
+  @Output() newItemEvent = new EventEmitter<string>();
 
   constructor(private tarjetaService : TarjetaService, private formBuilder: FormBuilder) { 
     this.formulario = this.formBuilder.group({
@@ -24,11 +30,35 @@ export class TarjetaCreditoComponent implements OnInit {
    }
 
   ngOnInit(): void {
+    this.subscription = this.tarjetaService.obtenerTarjeta().subscribe(data => {
+      console.log(data);
+      this.tarjeta = data;
+      this.formulario.patchValue({
+        titular: this.tarjeta.titular,
+        numeroTarjeta : this.tarjeta.numeroTarjeta,
+        fechaExpiracion: this.tarjeta.fechaExpiracion,
+        cvv: this.tarjeta.cvv, 
 
+      })
+      this.idTarjeta = this.tarjeta.id;
+    })
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   enviaFormulario(){
-    
+    if(this.idTarjeta === 0){
+      this.agregarTarjeta();
+    }else{
+      this.editarTarjeta();
+    }    
+
+  }
+
+  agregarTarjeta(){
+
     console.log(this.formulario);
 
     const tarjeta:tarjetaCredito = {
@@ -41,10 +71,33 @@ export class TarjetaCreditoComponent implements OnInit {
     console.log(tarjeta);
 
     this.tarjetaService.guardarTarjeta(tarjeta).subscribe(data => {
-      console.log('Guardado exitosamente')
+      console.log('Guardado exitosamente');
       this.formulario.reset();
+      this.addNewItem("");
     })
+  }
 
+  editarTarjeta(){
+    const tarjeta:tarjetaCredito = {
+      id: this.tarjeta.id,
+      titular : this.formulario.get('titular').value,
+      numeroTarjeta : this.formulario.get('numeroTarjeta').value,
+      fechaExpiracion : this.formulario.get('fechaExpiracion').value,
+      cvv : this.formulario.get('cvv').value
+    }
+
+    this.tarjetaService.actualizarTarjeta(this.idTarjeta, tarjeta).subscribe(data =>{
+      console.log('Editado exitosamente');
+      this.formulario.reset();
+      this.addNewItem("");
+      this.idTarjeta=0;
+    })
+  }
+
+
+  // Output para recargar la tabla cada vez que se añade un registro nuevo
+  addNewItem(value: string) {
+    this.newItemEvent.emit(value);
   }
 
 }
